@@ -1,0 +1,7 @@
+Flask
+Flask-SQLAlchemy
+Werkzeug
+face-recognition
+numpy
+opencv-python
+Pillow
