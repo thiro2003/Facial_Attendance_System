@@ -52,7 +52,6 @@ def mark_attendance():
         flash("Please login first ❌🚫", 'danger')
         return redirect('/')
 
-    # Load all users
     users = User.query.all()
     known_encodings = []
     known_user_ids = []
@@ -64,10 +63,15 @@ def mark_attendance():
             known_user_ids.append(user.id)
             known_usernames.append(user.full_name)
 
+    
+    if len(known_encodings) == 0:
+        flash("No registered faces found. Please register first ❌🚫", "danger")
+        return redirect('/home')
+
     video = cv2.VideoCapture(0)
+    marked = False
     attendance_message = None
     attendance_category = None
-    marked = False
 
     while True:
         ret, frame = video.read()
@@ -75,7 +79,6 @@ def mark_attendance():
             break
 
         rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-
         face_locations = face_recognition.face_locations(rgb_frame)
         face_encodings = face_recognition.face_encodings(rgb_frame, face_locations)
 
@@ -91,6 +94,9 @@ def mark_attendance():
                 face_encoding
             )
 
+            if len(face_distances) == 0:
+                continue
+
             best_match_index = np.argmin(face_distances)
 
             if matches[best_match_index]:
@@ -104,8 +110,8 @@ def mark_attendance():
                 ).first()
 
                 if existing:
-                    attendance_message = 'Attendance Already Marked For Today ✨👍'
-                    attendance_category = 'info'
+                    attendance_message = "Attendance Already Marked For Today ✨👍"
+                    attendance_category = "info"
                 else:
                     attendance = Attendance(
                         user_id=user_id,
@@ -115,10 +121,10 @@ def mark_attendance():
                     )
                     db.session.add(attendance)
                     db.session.commit()
-                    attendance_message = 'Attendance marked successfully ✨👍'
-                    attendance_category = 'success'
+                    attendance_message = "Attendance marked successfully ✨👍"
+                    attendance_category = "success"
 
-                marked = True  # stop scanning
+                marked = True
                 break
 
         cv2.imshow("Mark Attendance - Press Q to exit", frame)
@@ -130,12 +136,12 @@ def mark_attendance():
     cv2.destroyAllWindows()
 
     if not marked:
-        attendance_message = 'Face not recognized ❌🚫'
-        attendance_category = 'danger'
+        flash("Face not recognized ❌🚫", "danger")
+    else:
+        flash(attendance_message, attendance_category)
 
-    flash(attendance_message, attendance_category)
     return redirect('/home')
- 
+
   
   
 @app.route('/home',methods=['POST','GET'])
