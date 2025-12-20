@@ -1,6 +1,6 @@
 # Face Recognition Attendance System
 
-A Flask-based attendance system that uses face recognition to mark daily attendance. Users can register with their face image, and the system automatically marks attendance for recognized faces. It also auto-marks users as absent if not detected for the day.
+A Flask-based attendance system that uses face recognition to mark daily attendance. Users can register with their face image, and the system automatically marks attendance for recognized faces.
 
 ## Features
 - User Registration: Upload your face image, name, email, and password.
