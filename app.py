@@ -40,27 +40,7 @@ class Attendance(db.Model):
 with app.app_context():
   db.create_all()
   
-def auto_mark_absent_for_today():
-    today = date.today()
-
-    users = User.query.all()
-
-    for user in users:
-        already_marked = Attendance.query.filter(
-            Attendance.user_id == user.id,
-            db.func.date(Attendance.date_time) == today
-        ).first()
-
-        if not already_marked:
-            absent = Attendance(
-                user_id=user.id,
-                username=user.full_name,
-                attendance=False,   # ❌ ABSENT
-                date_time=datetime.utcnow()
-            )
-            db.session.add(absent)
-
-    db.session.commit()  
+  
   
   
 
@@ -162,9 +142,6 @@ def mark_attendance():
 def home():
     if 'user' not in session:
         return redirect('/')
-
-   
-    auto_mark_absent_for_today()
 
     user = session['user']
     user_attendance = Attendance.query.filter_by(username=user).all()
