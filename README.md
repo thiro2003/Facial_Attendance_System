@@ -55,7 +55,7 @@ Face_Recognition_Attendance/
 - Python 3.9+
 - Flask
 - Flask-SQLAlchemy
-- OpenCV
+- OpenCV 
 - face_recognition
 - NumPy
 - PIL (Pillow)
